@@ -7,7 +7,6 @@ export default createStore({
             currentPoll: null,
             results: [],
             hasVoted: false,
-            loading: false,
             error: null
         };
     },
@@ -22,9 +21,6 @@ export default createStore({
         SET_VOTED(state, status) {
             state.hasVoted = status;
         },
-        SET_LOADING(state, status) {
-            state.loading = status;
-        },
         SET_ERROR(state, error) {
             state.error = error;
         },
@@ -38,7 +34,6 @@ export default createStore({
 
     actions: {
         async createPoll({ commit }, { title, options }) {
-            commit('SET_LOADING', true);
             commit('SET_ERROR', null);
             try {
                 const response = await axios.post('/api/polls', { title, options });
@@ -46,13 +41,10 @@ export default createStore({
             } catch (error) {
                 commit('SET_ERROR', error.response?.data?.message || 'Ошибка создания');
                 throw error;
-            } finally {
-                commit('SET_LOADING', false);
-            }
+            } 
         },
 
         async fetchPoll({ commit }, shortCode) {
-            commit('SET_LOADING', true);
             commit('RESET_STATE', null);
             try {
                 const response = await axios.get(`/api/polls/${shortCode}`);
@@ -63,13 +55,10 @@ export default createStore({
                 }
             } catch (error) {
                 commit('SET_ERROR', 'Опрос не найден');
-            } finally {
-                commit('SET_LOADING', false);
-            }
+            } 
         },
 
         async vote({ commit }, { shortCode, optionId }) {
-            commit('SET_LOADING', true);
             try {
                 const response = await axios.post(`/api/polls/${shortCode}/vote`, {
                     option_id: optionId
@@ -83,9 +72,7 @@ export default createStore({
                     commit('SET_ERROR', 'Ошибка голосования');
                 }
                 throw error;
-            } finally {
-                commit('SET_LOADING', false);
-            }
+            } 
         }
     }
 });
