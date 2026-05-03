@@ -26,9 +26,7 @@ export default {
   },
 
   methods: {
-    // Когда выбираем радио-кнопку
     selectOption: function (id) {
-      // Говорим родителю: "Я выбрал этот ID"
       this.$emit('update:modelValue', id);
     }
   }
